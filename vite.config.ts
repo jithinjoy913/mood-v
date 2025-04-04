@@ -1,3 +1,13 @@
+// import { defineConfig } from 'vite';
+// import react from '@vitejs/plugin-react';
+
+// export default defineConfig({
+//   plugins: [react()],
+//   optimizeDeps: {
+//     exclude: ['lucide-react'],
+//   },
+//   base: '/mood-verse/',
+// });
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -6,5 +16,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  base: '/mood-verse/',
+  base: '/', // <- Change this line
 });
