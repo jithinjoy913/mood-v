@@ -43,15 +43,3 @@ npm install
 npm run dev
 ```
 
-## Deployment
-
-To access the live application, visit the following URL:
-[https://jithinjoy913.github.io/mood-v](https://jithinjoy913.github.io/mood-v)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT
