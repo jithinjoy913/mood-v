@@ -1,10 +1,10 @@
 # Mood Verse
 
-A modern web application that analyzes your mood using TensorFlow.js face detection and provides personalized recommendations for music, movies, and activities.
+A modern web application that analyzes your mood using face-api.js for face detection and provides personalized recommendations for music, movies, and activities.
 
 ## Features
 
-- Real-time face detection using TensorFlow.js
+- Real-time face detection using face-api.js
 - Mood analysis and personalized recommendations
 - Firebase authentication
 - Interactive mood quiz
@@ -14,7 +14,7 @@ A modern web application that analyzes your mood using TensorFlow.js face detect
 
 - React
 - TypeScript
-- TensorFlow.js
+- face-api.js
 - Firebase Authentication
 - Tailwind CSS
 - Zustand for state management
@@ -23,12 +23,12 @@ A modern web application that analyzes your mood using TensorFlow.js face detect
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/mood-verse.git
+git clone https://github.com/jithinjoy913/mood-v.git
 ```
 
 2. Install dependencies:
 ```bash
-cd mood-verse
+cd mood-v
 npm install
 ```
 
@@ -46,7 +46,7 @@ npm run dev
 ## Deployment
 
 To access the live application, visit the following URL:
-[https://yourusername.github.io/mood-verse](https://yourusername.github.io/mood-verse)
+[https://jithinjoy913.github.io/mood-v](https://jithinjoy913.github.io/mood-v)
 
 ## Contributing
 
