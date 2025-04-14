@@ -1,7 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import Webcam from 'react-webcam';
-import * as tf from '@tensorflow/tfjs';
-import * as faceDetection from '@tensorflow-models/face-detection';
+import * as faceapi from 'face-api.js';
 import { Camera, RefreshCw, Music, Film, Activity, ArrowRight } from 'lucide-react';
 
 export function MoodAnalyzer() {
@@ -9,40 +8,28 @@ export function MoodAnalyzer() {
   const [analyzing, setAnalyzing] = useState(false);
   const [mood, setMood] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [model, setModel] = useState<faceDetection.FaceDetector | null>(null);
   const [showRecommendations, setShowRecommendations] = useState(false);
 
   useEffect(() => {
-    const loadModel = async () => {
+    const loadModels = async () => {
       try {
-        await tf.ready();
-        await tf.setBackend('webgl');
-        
-        const detector = await faceDetection.createDetector(
-          faceDetection.SupportedModels.MediaPipeFaceDetector,
-          { 
-            runtime: 'tfjs',
-            modelType: 'short'
-          }
-        );
-        setModel(detector);
+        const modelsPath = '/models'; // Updated to absolute path for public directory
+        console.log('Loading models from:', modelsPath);
+        await faceapi.nets.tinyFaceDetector.loadFromUri(modelsPath);
+        console.log('TinyFaceDetector model loaded successfully.');
+        await faceapi.nets.faceExpressionNet.loadFromUri(modelsPath);
+        console.log('FaceExpressionNet model loaded successfully.');
       } catch (err) {
-        console.error('Error loading face detection model:', err);
-        setError('Failed to load face detection model. Please refresh the page.');
+        console.error('Error loading face-api.js models:', err);
+        setError('Failed to load face detection models. Please ensure the models are correctly hosted and refresh the page.');
       }
     };
 
-    loadModel();
-
-    return () => {
-      if (model) {
-        tf.dispose();
-      }
-    };
+    loadModels();
   }, []);
 
   const capture = useCallback(async () => {
-    if (!webcamRef.current || !model) return;
+    if (!webcamRef.current) return;
 
     setAnalyzing(true);
     setError(null);
@@ -52,16 +39,22 @@ export function MoodAnalyzer() {
         throw new Error('Failed to capture image from webcam');
       }
 
+      console.log('Captured image from webcam.');
       const img = new Image();
       img.src = imageSrc;
       await img.decode();
-      
-      const faces = await model.detectFaces(img);
-      
-      if (faces.length > 0) {
-        const moods = ['happy', 'sad', 'neutral', 'excited', 'tired'];
-        const detectedMood = moods[Math.floor(Math.random() * moods.length)];
-        setMood(detectedMood);
+      console.log('Image decoded successfully.');
+
+      const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+      console.log('Detections:', detections);
+
+      if (detections.length > 0) {
+        const expressions = detections[0].expressions;
+        const mood = (Object.keys(expressions) as (keyof typeof expressions)[]).reduce(
+          (a, b) => (expressions[a] > expressions[b] ? a : b)
+        );
+        console.log('Detected mood:', mood);
+        setMood(mood);
         setShowRecommendations(true);
       } else {
         setError('No face detected. Please ensure your face is visible in the camera.');
@@ -72,7 +65,7 @@ export function MoodAnalyzer() {
     } finally {
       setAnalyzing(false);
     }
-  }, [model]);
+  }, []);
 
   if (error) {
     return (
@@ -117,18 +110,13 @@ export function MoodAnalyzer() {
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 space-x-4">
           <button
             onClick={capture}
-            disabled={analyzing || !model}
+            disabled={analyzing}
             className="bg-purple-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-purple-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {analyzing ? (
               <>
                 <RefreshCw className="h-5 w-5 animate-spin" />
                 <span>Analyzing...</span>
-              </>
-            ) : !model ? (
-              <>
-                <RefreshCw className="h-5 w-5 animate-spin" />
-                <span>Loading model...</span>
               </>
             ) : (
               <>
