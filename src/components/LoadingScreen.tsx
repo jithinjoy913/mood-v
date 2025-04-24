@@ -7,7 +7,7 @@ export function LoadingScreen() {
         <div className="w-24 h-24 mb-4 mx-auto">
           <img
             src="D:\Documents\CU\New folder\project\project\MOOD VERSE.png"
-            alt="Loading..."
+            alt="Loading"
             className="w-full h-full"
           />
         </div>
